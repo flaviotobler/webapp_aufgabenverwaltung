@@ -17,11 +17,18 @@ app.listen(process.env.PORT || 3000, function () {
 
 app.post('/addTask', function (req, res) {
 	console.log(req.body);
-	newTask = {id: index, name: req.body.isname, isOpen: "todo"};
-	index = index + 1;
-	tasks.push(newTask);
-	console.log(newTask);
-	console.log(tasks);
+	var taskString = req.body.name;
+	var taskArray = [];
+	taskArray = taskString.split('p$,3os-');
+	console.log(taskArray);
+	console.log(typeof taskArray);
+	taskArray.forEach(task => {
+	    newTask = {id: index, name: task, isOpen: "todo"};
+        index = index + 1;
+        tasks.push(newTask);
+        console.log(newTask);
+        console.log(tasks);
+	});
 	res.send(JSON.stringify(tasks));
 });
 
@@ -59,12 +66,10 @@ app.post('/open', function (req, res) {
 
 app.get('/selectionT', function (req, res) {
 	var rueckgabe = new Array ();
-	console.log("forschleife");
 	tasks.forEach(function(task){
 		console.log(task.isOpen);
 		if(task.isOpen == "todo")
 		{
-			console.log("gefunden");
 			rueckgabe.push(task);
 		}
 	});
@@ -73,12 +78,10 @@ app.get('/selectionT', function (req, res) {
 
 app.get('/selectionD', function (req, res) {
 	var rueckgabe = new Array ();
-	console.log("forschleife");
 	tasks.forEach(function(task){
 		console.log(task.isOpen);
 		if(task.isOpen == "done")
 		{
-			console.log("gefunden");
 			rueckgabe.push(task);
 		}
 	});

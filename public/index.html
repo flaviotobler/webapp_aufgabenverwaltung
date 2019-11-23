@@ -4,11 +4,12 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+	<title>Webapp Aufgabenverwaltung</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
   
 	<link rel="stylesheet" typee="text/css" href="Aufgabenverwaltung.css">
+    <link rel="manifest" href="/manifest.json">
   </head>
   <body onload="loadSiteT()">
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -30,30 +31,55 @@
 	<div class="container">
 		<div class="row">
 			<div id="eingabe" class="col-12">
-					 <input type="task" class="form-control" id="taskname" aria-describedby="taskname" placeholder="Enter task" name = "isname">
-					 <input id="eingabefeld" class = "redButton" type = "submit" value = "Submit" onclick=addTask()>
+					 <input type="task" class="form-control" id="taskname" aria-describedby="taskname" placeholder="Enter task" name = "name">
+					 <input id="eingabefeld" type = "submit" value = "Submit">
 			</div>
 		</div>
 		<div id="liste" class="row">
 		</div>
+	</div>
+	<div id="offline">
+
 	</div>
 
     <!-- JavaScript -->
 	<script src="Aufgabenverwaltung.js"></script>
 
 	<!-- Service Worker registration -->
+	<script src="./idb-keyval.js" ></script>
 	<script>
-		// Register the service worker
-		if ('serviceWorker' in navigator) {
-			navigator.serviceWorker.register('/ServiceWorker.js').then(function(registration) {
-				// Registration was successful
-				console.log('ServiceWorker registration successful with scope: ',
-				registration.scope);
-		}).catch(function(err) {
-			// registration failed :(
-			console.log('ServiceWorker registration failed: ', err);
-			});
-		}
+		if('serviceWorker' in navigator && 'SyncManager' in window){
+				navigator.serviceWorker.register('./ServiceWorker.js')
+					.then(registration => navigator.serviceWorker.ready)
+						.then(registration => {
+							document.getElementById('eingabefeld').addEventListener('click', () => {
+								console.log(navigator.onLine);
+								if(navigator.onLine){
+									addTask();
+								} else{
+									registration.sync.register('addTask').then(() => {
+										var task = document.getElementById('taskname').value
+										idbKeyval.get('addTask').then(value =>{
+											console.log(value);
+											console.log(typeof value);
+											var payload = String(value);
+											var separator = "p$,3os-";
+											if(payload == "undefined"){
+												payload = "";
+											} else {
+												payload = payload + separator;
+											}
+											payload = payload + task;
+											idbKeyval.set('addTask', payload);
+										})
+
+									});
+								}
+							});
+						});
+			} else {
+				document.getElementById('eingabefeld').addEventListener('click', addTask);
+			}
 	</script>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

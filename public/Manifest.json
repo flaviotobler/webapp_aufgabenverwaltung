@@ -1,0 +1,16 @@
+{
+	"name": "Aufgabenverwaltung web app",
+	"short_name": "Aufgabenverwaltung",
+	"start_url": "/index.html",
+	"display": "standalone",
+	"background_color": "#FFDF00",
+	"icons": [{
+		"src": "images/homescreen.png",
+		"sizes": "192x192",
+		"type": "image/png"
+	}, {
+		"src": "images/homescreen-144.png",
+		"sizes": "144x144",
+		"type": "image/png"
+	}]
+}
